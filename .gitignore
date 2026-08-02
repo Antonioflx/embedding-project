@@ -1,0 +1,24 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code / internal working notes (not part of the public repo)
+.claude/
+context/
