@@ -1,5 +1,7 @@
 x-api-service-base: &api-service-base
-  build: ./api-service
+  build:
+    context: ./api-service
+    dockerfile: docker/Dockerfile
   env_file:
     - ./api-service/.env
   environment:
@@ -26,7 +28,9 @@ services:
       retries: 5
 
   embedding-service:
-    build: ./embedding-service
+    build:
+      context: ./embedding-service
+      dockerfile: docker/Dockerfile
     env_file:
       - ./embedding-service/.env
     environment:
