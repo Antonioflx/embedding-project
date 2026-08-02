@@ -17,7 +17,8 @@
       "@interface/*": ["./src/interfaces/*"],
       "@use-case/*": ["./src/use-cases/*"],
       "@repository/*": ["./src/repository/*"],
-      "@event/*": ["./src/events/*"]
+      "@event/*": ["./src/events/*"],
+      "@service/*": ["./src/service/*"]
     }
   },
   "include": ["src"]
