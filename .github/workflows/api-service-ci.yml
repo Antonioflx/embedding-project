@@ -1,0 +1,44 @@
+name: api-service CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api-service/**"
+      - ".github/workflows/api-service-ci.yml"
+  pull_request:
+    paths:
+      - "api-service/**"
+      - ".github/workflows/api-service-ci.yml"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: api-service
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: api-service/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Lint (Biome)
+        run: npx biome check .
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build

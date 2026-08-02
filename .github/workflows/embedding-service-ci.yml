@@ -1,0 +1,49 @@
+name: embedding-service CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "embedding-service/**"
+      - ".github/workflows/embedding-service-ci.yml"
+  pull_request:
+    paths:
+      - "embedding-service/**"
+      - ".github/workflows/embedding-service-ci.yml"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: embedding-service
+
+env:
+  # Dummy values so `Settings()` (pydantic-settings, all fields required) can
+  # be constructed at import time. Nothing here calls a real external
+  # service: the retry test mocks the Gemini client, and no route runs.
+  GEMINI_API_KEY: ci-dummy-key
+  EMBEDDING_SERVICE_API_KEY: ci-dummy-key
+  MONGODB_URI: mongodb://localhost:27017
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: embedding-service/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile check (syntax/import errors)
+        run: python -m compileall -q src scripts
+
+      - name: Import the FastAPI app (catches wiring errors)
+        run: python -c "from src.main import app; print(app.title or 'app import OK')"
+
+      - name: Gemini retry behavior test
+        run: python scripts/test_gemini_retry.py
